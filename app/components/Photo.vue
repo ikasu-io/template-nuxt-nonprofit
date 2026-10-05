@@ -13,7 +13,7 @@ const img = useImage()
 const files = useAppConfig().imageFiles
 const { data: images } = await useAsyncData('images', () => queryCollection('images').first())
 const src = computed(() => `/images/${files[props.name] ?? `${props.name}.jpg`}`)
-const url = (width) => img(src.value, { width, format: 'webp' })
+const url = (width) => img(src.value, { width, format: 'webp', quality: 62 })
 const srcset = computed(() => widths.map((w) => `${url(w)} ${w}w`).join(', '))
 const alt = computed(() => images.value?.alt?.[props.name] ?? '')
 </script>

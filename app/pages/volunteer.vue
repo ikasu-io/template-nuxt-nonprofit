@@ -169,8 +169,8 @@ useHead({
 }
 .month h2 {
   font-size: clamp(1.6rem, 2.6vw, 2.2rem);
-  font-style: italic;
-  font-weight: 400;
+  font-weight: 300;
+  color: var(--moss);
   padding-top: 1.6rem;
   margin: 0;
 }

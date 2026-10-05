@@ -71,7 +71,9 @@ const close = () => menu.value?.hidePopover?.()
   letter-spacing: -0.01em;
 }
 .name em {
+  font-style: normal;
   font-weight: 400;
+  color: var(--moss);
 }
 .nav {
   display: flex;

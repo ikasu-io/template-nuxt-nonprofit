@@ -32,7 +32,6 @@ export default defineNuxtConfig({
   // the site is generated.
   image: {
     format: ['webp'],
-    quality: 76,
     densities: [1, 2],
     screens: { sm: 480, md: 800, lg: 1200, xl: 1600 },
   },

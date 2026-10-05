@@ -245,7 +245,7 @@ useHead({ titleTemplate: '%s' })
 }
 .n {
   display: block;
-  font: italic 400 1.4rem/1 var(--serif);
+  font: 300 1.4rem/1 var(--serif);
   color: var(--clay);
   margin-bottom: 1.2rem;
 }
