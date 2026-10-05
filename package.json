@@ -1,0 +1,23 @@
+{
+  "name": "template-nuxt-nonprofit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sallow River Alliance — a fictional river conservation nonprofit website built with Nuxt",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt generate",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "dependencies": {
+    "@nuxt/content": "^3.16.1",
+    "@nuxt/image": "^2.1.0",
+    "nuxt": "^4.5.2",
+    "zod": "^4.6.5"
+  }
+}

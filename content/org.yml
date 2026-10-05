@@ -1,0 +1,45 @@
+# The organization: name, contact, people. Shown in the header, footer,
+# About page and in the search-engine data.
+name: Sallow River Alliance
+tagline: Neighbors looking after a river.
+# Your domain, without a trailing slash. Used for links in the sitemap
+# and when the site is shared.
+url: https://sallowriver.example
+founded: 2009
+description: >-
+  A member-supported nonprofit that plants streamside forests, takes out
+  old dams, tests the water with schools and cleans up the Sallow River
+  and its creeks around Wren Hollow, Ohio.
+address:
+  street: 210 Mill Street
+  town: Wren Hollow
+  state: OH
+phone: (740) 555-0147
+email: hello@sallowriver.example
+# Placeholder: a real 501(c)(3) puts its tax ID here.
+ein: 00-0000000
+# Where "Donate" and "Become a member" lead. Replace with your donation
+# provider's page (Givebutter, Donorbox, Stripe Payment Links, …).
+donate_url: /give/
+members: 1400
+staff:
+  - name: Dolores Whitfield
+    role: Executive director
+    email: dolores@sallowriver.example
+  - name: Marcus Lee
+    role: Restoration lead
+    email: marcus@sallowriver.example
+  - name: Ana Ruiz
+    role: Education and volunteers
+    email: volunteer@sallowriver.example
+board:
+  - name: Gene Albright
+    role: Chair, retired science teacher
+  - name: Priya Desai
+    role: Treasurer, accountant
+  - name: Walt Henning
+    role: Sallow Valley Anglers' Club
+  - name: Rosa Delgado
+    role: Wren Hollow Elementary
+  - name: Tom Kessler
+    role: Farmer, Tanner Creek

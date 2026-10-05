@@ -1,0 +1,13 @@
+# The amounts offered on the Donate page and what each one pays for.
+amounts:
+  - amount: 25
+    pays_for: Four native seedlings with tubes and stakes
+  - amount: 50
+    pays_for: A water-testing kit for one school class
+  - amount: 100
+    pays_for: Gloves, grabbers and a dumpster share for one cleanup
+  - amount: 250
+    pays_for: A day of heavy equipment on a dam removal
+monthly_note: >-
+  Monthly gifts let us plan a whole planting season ahead. You can change
+  or stop yours at any time.

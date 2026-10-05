@@ -1,0 +1,11 @@
+# The big figures on the home page. `value` is shown as written.
+since: 2009
+figures:
+  - value: "18,400"
+    label: trees planted along the river and its creeks
+  - value: "4"
+    label: old dams removed, reopening 23 miles of stream
+  - value: "212"
+    label: tons of trash hauled out of the water
+  - value: "3,100"
+    label: students who have tested the river with us

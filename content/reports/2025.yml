@@ -1,0 +1,42 @@
+# The annual report for one year, shown at /report/<year>.
+year: 2025
+intro: >-
+  2025 was the year the Miller's Ford permits came through, the year we
+  passed fifteen thousand trees, and the year three more schools joined
+  the water-testing program. Here is what we did with the money you
+  gave us, down to the dollar.
+figures:
+  - value: "2,860"
+    label: trees planted
+  - value: "612"
+    label: volunteers, 4,980 hours
+  - value: "38"
+    label: tons of trash removed
+  - value: "11"
+    label: schools testing the water
+income:
+  - label: Members and individual gifts
+    amount: 241800
+  - label: Foundation grants
+    amount: 168500
+  - label: Township and county contracts
+    amount: 74200
+  - label: Events and paddle trips
+    amount: 18900
+spending:
+  - label: Restoration work (trees, dams, cleanups)
+    amount: 318400
+  - label: Education and water testing
+    amount: 96300
+  - label: Running the office
+    amount: 41700
+  - label: Fundraising
+    amount: 27600
+thanks:
+  - The Hollow County Community Foundation
+  - The Larch Family Fund
+  - Wren Hollow Township
+  - Hollow County Soil & Water District
+  - Sallow Valley Anglers' Club
+  - Kessler Farm, Tanner Creek
+  - Every one of our 1,400 members
