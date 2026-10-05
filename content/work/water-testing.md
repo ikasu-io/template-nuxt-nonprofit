@@ -14,8 +14,8 @@ figures:
   - value: 11
     label: schools taking part
 partners:
-  - Wren Hollow Elementary
-  - Wren Hollow High School
+  - Sallow Valley Elementary
+  - Sallow Valley High School
   - Hollow County Career Center
 ---
 

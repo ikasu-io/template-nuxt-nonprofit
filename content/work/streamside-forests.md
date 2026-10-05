@@ -16,7 +16,7 @@ figures:
 partners:
   - Hollow County Soil & Water District
   - Kessler Farm
-  - Wren Hollow High School FFA
+  - Sallow Valley High School FFA
 ---
 
 A creek with no trees along it heats up in the summer sun, and warm water

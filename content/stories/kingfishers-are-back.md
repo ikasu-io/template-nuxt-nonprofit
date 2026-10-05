@@ -11,7 +11,7 @@ You usually hear a belted kingfisher before you see it: a dry rattle,
 like someone running a stick along a fence, and then a blue-gray streak
 low over the water.
 
-In June, a student from Wren Hollow Elementary heard one at our
+In June, a student from Sallow Valley Elementary heard one at our
 water-testing site on Tanner Creek. Two weeks later Tom Kessler found the
 nest, a tunnel in the cut bank below the trees we planted on his land in
 2014.
