@@ -4,7 +4,7 @@ description: Our spring cleanup filled one dumpster instead of four. Here is wha
 date: 2026-04-25
 author: Marcus Lee
 image: cleanup
-caption: Part of the spring haul on the bank below the railroad bridge.
+caption: Volunteers heading downstream towards the railroad bridge on Earth Day weekend.
 ---
 
 On Earth Day weekend, 134 volunteers worked six sites along the Sallow.
