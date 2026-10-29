@@ -1,0 +1,9 @@
+# Wofür jeder Betrag aus content/donate.yml reicht, auf Deutsch, nach Betrag.
+pays_for:
+  "$25": Vier heimische Setzlinge mit Schutzhülle und Pfahl
+  "$50": Ein Testset für Wasserproben für eine ganze Schulklasse
+  "$100": Handschuhe, Greifzangen und ein Anteil am Container für eine Aufräumaktion
+  "$250": Ein Tag schweres Gerät beim Rückbau eines Wehrs
+monthly_note: >-
+  Mit monatlichen Spenden können wir eine ganze Pflanzsaison im Voraus
+  planen. Sie können Ihre Spende jederzeit ändern oder beenden.

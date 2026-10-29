@@ -1,0 +1,42 @@
+# Der Jahresbericht für ein Jahr, zu sehen unter /de/report/<Jahr>.
+year: 2025
+intro: >-
+  2025 war das Jahr, in dem die Genehmigungen für Miller's Ford kamen, in
+  dem wir die Marke von fünfzehntausend Bäumen überschritten haben und in
+  dem drei weitere Schulen bei den Gewässeruntersuchungen eingestiegen sind.
+  Hier steht, was wir mit Ihrem Geld gemacht haben – auf den Dollar genau.
+figures:
+  - value: "2.860"
+    label: Bäume gepflanzt
+  - value: "612"
+    label: Freiwillige, 4.980 Stunden
+  - value: "38"
+    label: Tonnen Müll beseitigt
+  - value: "11"
+    label: Schulen untersuchen das Wasser
+income:
+  - label: Mitgliedsbeiträge und Einzelspenden
+    amount: 241800
+  - label: Zuschüsse von Stiftungen
+    amount: 168500
+  - label: Aufträge von Gemeinde und County
+    amount: 74200
+  - label: Veranstaltungen und Kanutouren
+    amount: 18900
+spending:
+  - label: Renaturierung (Bäume, Wehre, Aufräumaktionen)
+    amount: 318400
+  - label: Umweltbildung und Gewässeruntersuchung
+    amount: 96300
+  - label: Büro und Verwaltung
+    amount: 41700
+  - label: Spendenwerbung
+    amount: 27600
+thanks:
+  - The Hollow County Community Foundation
+  - The Larch Family Fund
+  - Gemeinde Wren Hollow
+  - Hollow County Soil & Water District
+  - Anglerverein Sallow Valley
+  - Kessler-Farm, Tanner Creek
+  - Jedes einzelne unserer 1.400 Mitglieder

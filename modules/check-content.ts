@@ -13,6 +13,14 @@ import { schemas } from '../schemas'
 
 const imageFields = ['image', 'before', 'after']
 
+// The schema for a collection. Texts have one collection per language that
+// share a schema: `stories_de` uses `stories`, `org_de` uses `orgTexts`.
+const schemaOf = (collection: string) => {
+  const [, name, lang] = collection.match(/^(.*?)(?:_(en|de))?$/) ?? []
+  const key = (lang && `${name}Texts` in schemas ? `${name}Texts` : name) as keyof typeof schemas
+  return schemas[key]
+}
+
 export default defineNuxtModule({
   meta: { name: 'check-content' },
   setup(_, nuxt) {
@@ -26,7 +34,7 @@ export default defineNuxtModule({
     nuxt.options.appConfig.imageFiles = imageFiles
 
     nuxt.hook('content:file:afterParse' as any, (ctx: any) => {
-      const schema = schemas[ctx.collection?.name as keyof typeof schemas]
+      const schema = schemaOf(String(ctx.collection?.name))
       if (!schema) return
       // ctx.file.id is "<collection>/<path inside content/>"
       const file = `content/${String(ctx.file.id).split('/').slice(1).join('/')}`
@@ -44,7 +52,7 @@ export default defineNuxtModule({
           problems.push(`${field}: no image named "${name}" in public/images/`)
         }
       }
-      if (ctx.collection.name === 'images') {
+      if (ctx.collection.name.startsWith('images_')) {
         for (const name of Object.keys(imageFiles)) {
           if (!ctx.content.alt?.[name]) problems.push(`alt.${name}: the photo public/images/${imageFiles[name]} has no description`)
         }

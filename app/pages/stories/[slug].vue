@@ -1,11 +1,17 @@
 <script setup>
 const route = useRoute()
-const path = route.path.replace(/\/$/, '')
+const path = `/stories/${route.params.slug}`
+const { t, locale } = useI18n()
+const texts = useTexts()
+const localePath = useLocalePath()
+const { shortDate } = useFormat()
 const { data: org } = await useOrg()
-const { data: story } = await useAsyncData(`story-${path}`, () => queryCollection('stories').path(path).first())
+const { data: story } = await useAsyncData(`story-${locale.value}-${path}`, () =>
+  queryCollection(texts('stories')).path(path).first(),
+)
 if (!story.value) throw createError({ statusCode: 404, statusMessage: 'Story not found', fatal: true })
-const { data: more } = await useAsyncData(`more-${path}`, () =>
-  queryCollection('stories').where('path', '<>', path).order('date', 'DESC').limit(2).all(),
+const { data: more } = await useAsyncData(`more-${locale.value}-${path}`, () =>
+  queryCollection(texts('stories')).where('path', '<>', path).order('date', 'DESC').limit(2).all(),
 )
 usePageMeta({ title: story.value.title, description: story.value.description, image: story.value.image })
 useHead({
@@ -30,12 +36,13 @@ useHead({
 <template>
   <article>
     <header class="wrap head">
-      <NuxtLink to="/stories" class="back">Stories</NuxtLink>
+      <NuxtLink :to="localePath('/stories')" class="back">{{ t('stories.title') }}</NuxtLink>
       <h1>{{ story.title }}</h1>
       <p class="lead">{{ story.description }}</p>
-      <p class="byline">
-        By <strong>{{ story.author }}</strong> · <time :datetime="story.date">{{ shortDate(story.date) }}</time>
-      </p>
+      <i18n-t keypath="stories.byline" tag="p" class="byline" scope="global">
+        <template #author><strong>{{ story.author }}</strong></template>
+        <template #date><time :datetime="story.date">{{ shortDate(story.date) }}</time></template>
+      </i18n-t>
     </header>
     <figure class="hero">
       <Photo :name="story.image" eager />
@@ -47,13 +54,13 @@ useHead({
 
     <aside v-if="more.length" class="wrap section more-stories" aria-labelledby="more-title">
       <div class="section-head">
-        <h2 id="more-title">More from the river</h2>
-        <NuxtLink class="more" to="/stories">All stories</NuxtLink>
+        <h2 id="more-title">{{ t('stories.more') }}</h2>
+        <NuxtLink class="more" :to="localePath('/stories')">{{ t('stories.all') }}</NuxtLink>
       </div>
       <ul>
         <li v-for="s in more" :key="s.path">
           <span class="kicker">{{ shortDate(s.date) }}</span>
-          <NuxtLink :to="s.path">{{ s.title }}</NuxtLink>
+          <NuxtLink :to="localePath(s.path)">{{ s.title }}</NuxtLink>
         </li>
       </ul>
     </aside>

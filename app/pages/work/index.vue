@@ -1,35 +1,38 @@
 <script setup>
-const { data: projects } = await useAsyncData('projects', () => queryCollection('projects').order('order', 'ASC').all())
+const { t, locale } = useI18n()
+const texts = useTexts()
+const localePath = useLocalePath()
+const { data: projects } = await useAsyncData(`projects-${locale.value}`, () =>
+  queryCollection(texts('projects')).order('order', 'ASC').all(),
+)
 usePageMeta({
-  title: 'Our work',
-  description: 'Streamside forests, dam removals, water testing with schools and river cleanups on the Sallow River and its creeks.',
+  title: t('work.title'),
+  description: t('work.description'),
   image: 'dam-after',
 })
-const statusLabel = { planned: 'Planned', underway: 'Underway', done: 'Done' }
 </script>
 
 <template>
   <div class="wrap section">
     <header class="intro">
-      <span class="kicker">Our work</span>
-      <h1>Four ways to fix a river</h1>
+      <span class="kicker">{{ t('work.kicker') }}</span>
+      <h1>{{ t('work.heading') }}</h1>
       <p class="lead">
-        A river gets sick slowly: the trees along it go, a dam holds it back, trash and fertilizer wash in. We work on all of
-        it at once, a mile at a time, with the people who live along the water.
+        {{ t('work.lead') }}
       </p>
     </header>
 
     <ol class="projects">
       <li v-for="(project, i) in projects" :key="project.path" :class="['project', { flip: i % 2 }]">
-        <NuxtLink :to="project.path" class="photo" tabindex="-1" aria-hidden="true">
+        <NuxtLink :to="localePath(project.path)" class="photo" tabindex="-1" aria-hidden="true">
           <Photo :name="project.image" desktop="50vw" />
         </NuxtLink>
         <div class="text">
           <p class="meta">
-            <span :class="['status', project.status]">{{ statusLabel[project.status] }}</span>
+            <span :class="['status', project.status]">{{ t(`status.${project.status}`) }}</span>
             <span class="muted">{{ project.years }}</span>
           </p>
-          <h2><NuxtLink :to="project.path">{{ project.title }}</NuxtLink></h2>
+          <h2><NuxtLink :to="localePath(project.path)">{{ project.title }}</NuxtLink></h2>
           <p>{{ project.summary }}</p>
           <p v-if="project.figures.length" class="figure">
             <strong>{{ project.figures[0].value }}</strong> {{ project.figures[0].label }}

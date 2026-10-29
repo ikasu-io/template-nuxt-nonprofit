@@ -1,6 +1,6 @@
 <script setup>
 // A photo from public/images/, by name (`kingfisher`), with its description
-// from content/images.yml. Converted to WebP at 480–1600 px when the site is
+// from content/<language>/images.yml. Converted to WebP at 480–1600 px when the site is
 // generated; `desktop` is how wide it shows on screens wider than 860 px
 // (on smaller screens photos are full width).
 const props = defineProps({
@@ -11,7 +11,12 @@ const props = defineProps({
 const widths = [480, 800, 1200, 1600]
 const img = useImage()
 const files = useAppConfig().imageFiles
-const { data: images } = await useAsyncData('images', () => queryCollection('images').first())
+const { locale } = useI18n()
+const texts = useTexts()
+const { data: images } = await useAsyncData(
+  () => `images-${locale.value}`,
+  () => queryCollection(texts('images')).first(),
+)
 const src = computed(() => `/images/${files[props.name] ?? `${props.name}.jpg`}`)
 const url = (width) => img(src.value, { width, format: 'webp', quality: 62 })
 const srcset = computed(() => widths.map((w) => `${url(w)} ${w}w`).join(', '))

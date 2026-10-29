@@ -1,9 +1,13 @@
 <script setup>
+const { t, locale } = useI18n()
+const texts = useTexts()
+const localePath = useLocalePath()
 const { data: org } = await useOrg()
 const { data: report } = await useLatestReport()
+const { data: about } = await useAsyncData(`about-${locale.value}`, () => queryCollection(texts('about')).first())
 usePageMeta({
-  title: 'About',
-  description: `How ${org.value.name} started, who runs it, and how to reach us.`,
+  title: t('about.title'),
+  description: t('about.description', { name: org.value.name }),
   image: 'paddle',
 })
 </script>
@@ -11,8 +15,8 @@ usePageMeta({
 <template>
   <div>
     <header class="wrap section intro">
-      <span class="kicker">About</span>
-      <h1>Started by anglers and a science teacher, run by its members</h1>
+      <span class="kicker">{{ t('about.kicker') }}</span>
+      <h1>{{ about.title }}</h1>
     </header>
 
     <div class="wrap story">
@@ -20,31 +24,18 @@ usePageMeta({
         <Photo name="paddle" desktop="45vw" eager />
       </figure>
       <div class="prose">
-        <p class="lead">
-          In {{ org.founded }}, a handful of people who fished the Sallow got tired of watching it fill up with tires and silt. They
-          met in the back of the Wren Hollow library, and Gene Albright, who taught science at the high school, brought his class's
-          water-test results.
-        </p>
-        <p>
-          The first cleanup that spring filled four dumpsters. The first trees went in two years later, on a farm whose owner had
-          seen the cleanup in the paper. Since then the alliance has grown to {{ org.members.toLocaleString('en-US') }} members,
-          three staff and hundreds of volunteers a year, and it still works the same way: one stretch of river at a time, with the
-          people who own the land along it.
-        </p>
-        <p>
-          We are a member organization. Members elect the board at the annual meeting every March, and anyone who has paid dues
-          can stand for it.
-        </p>
+        <p class="lead">{{ about.lead }}</p>
+        <ContentRenderer :value="about" />
       </div>
     </div>
 
     <section class="wrap section" aria-labelledby="people-title">
       <div class="section-head">
-        <h2 id="people-title">The people</h2>
+        <h2 id="people-title">{{ t('about.people') }}</h2>
       </div>
       <div class="people">
         <div>
-          <h3 class="small-head">Staff</h3>
+          <h3 class="small-head">{{ t('about.staff') }}</h3>
           <ul>
             <li v-for="person in org.staff" :key="person.name">
               <strong>{{ person.name }}</strong>
@@ -54,7 +45,7 @@ usePageMeta({
           </ul>
         </div>
         <div>
-          <h3 class="small-head">Board</h3>
+          <h3 class="small-head">{{ t('about.board') }}</h3>
           <ul>
             <li v-for="person in org.board" :key="person.name">
               <strong>{{ person.name }}</strong>
@@ -68,23 +59,23 @@ usePageMeta({
     <section class="band" aria-labelledby="money-title">
       <div class="wrap section money">
         <div>
-          <h2 id="money-title">Open books</h2>
+          <h2 id="money-title">{{ t('about.books') }}</h2>
           <p class="lead">
-            We publish where every dollar comes from and where it goes.
-            <NuxtLink v-if="report" :to="`/report/${report.year}`">Read the {{ report.year }} annual report</NuxtLink>.
+            {{ t('about.booksText') }}
+            <NuxtLink v-if="report" :to="localePath(`/report/${report.year}`)">{{ t('about.readReport', { year: report.year }) }}</NuxtLink>.
           </p>
         </div>
         <dl>
-          <div><dt>Legal status</dt><dd>501(c)(3) nonprofit organization</dd></div>
-          <div><dt>EIN</dt><dd>{{ org.ein }}</dd></div>
-          <div><dt>Founded</dt><dd>{{ org.founded }}</dd></div>
-          <div><dt>Note</dt><dd>{{ org.name }} is fictional. A real organization lists its tax ID and links its Form 990 here.</dd></div>
+          <div><dt>{{ t('about.status') }}</dt><dd>{{ t('about.statusValue') }}</dd></div>
+          <div><dt>{{ t('about.ein') }}</dt><dd>{{ org.ein }}</dd></div>
+          <div><dt>{{ t('about.founded') }}</dt><dd>{{ org.founded }}</dd></div>
+          <div><dt>{{ t('about.note') }}</dt><dd>{{ t('about.noteValue', { name: org.name }) }}</dd></div>
         </dl>
       </div>
     </section>
 
     <section class="wrap section contact" aria-labelledby="contact-title">
-      <h2 id="contact-title">Get in touch</h2>
+      <h2 id="contact-title">{{ t('about.contact') }}</h2>
       <div class="contact-grid">
         <p class="lead">
           {{ org.address.street }}<br />
@@ -94,7 +85,7 @@ usePageMeta({
           <a :href="`tel:${org.phone.replace(/[^0-9+]/g, '')}`">{{ org.phone }}</a><br />
           <a :href="`mailto:${org.email}`">{{ org.email }}</a>
         </p>
-        <p class="muted">The office is usually staffed on weekday mornings. On Saturdays, we're out on the river.</p>
+        <p class="muted">{{ t('about.office') }}</p>
       </div>
     </section>
   </div>

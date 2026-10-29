@@ -1,11 +1,16 @@
 <script setup>
 const { data: org } = await useOrg()
+const { t, locale, locales } = useI18n()
+const localePath = useLocalePath()
+const switchLocalePath = useSwitchLocalePath()
 const links = [
-  { to: '/work', label: 'Our work' },
-  { to: '/volunteer', label: 'Volunteer' },
-  { to: '/stories', label: 'Stories' },
-  { to: '/about', label: 'About' },
+  { to: '/work', label: 'header.work' },
+  { to: '/volunteer', label: 'header.volunteer' },
+  { to: '/stories', label: 'header.stories' },
+  { to: '/about', label: 'header.about' },
 ]
+// The same page in the other language, named in that language.
+const others = computed(() => locales.value.filter((l) => l.code !== locale.value))
 // Close the mobile menu when a link in it is followed.
 const menu = ref(null)
 const close = () => menu.value?.hidePopover?.()
@@ -14,7 +19,7 @@ const close = () => menu.value?.hidePopover?.()
 <template>
   <header class="header">
     <div class="wrap bar">
-      <NuxtLink to="/" class="brand" :aria-label="`${org.name}, home`">
+      <NuxtLink :to="localePath('/')" class="brand" :aria-label="t('header.home', { name: org.name })">
         <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
           <circle cx="20" cy="20" r="19" fill="#4a6b2a" />
           <path d="M5 23c5-5 9 3 15-2s9-6 15-1" fill="none" stroke="#f6f3ec" stroke-width="3" stroke-linecap="round" />
@@ -24,19 +29,36 @@ const close = () => menu.value?.hidePopover?.()
         <span class="name">Sallow River <em>Alliance</em></span>
       </NuxtLink>
 
-      <nav aria-label="Main" class="nav">
-        <NuxtLink v-for="link in links" :key="link.to" :to="link.to">{{ link.label }}</NuxtLink>
+      <nav :aria-label="t('header.nav')" class="nav">
+        <NuxtLink v-for="link in links" :key="link.to" :to="localePath(link.to)">{{ t(link.label) }}</NuxtLink>
+        <NuxtLink
+          v-for="other in others"
+          :key="other.code"
+          :to="switchLocalePath(other.code)"
+          :lang="other.language"
+          :hreflang="other.language"
+          class="language"
+        >{{ other.name }}</NuxtLink>
       </nav>
-      <NuxtLink to="/donate" class="button donate">Donate</NuxtLink>
+      <NuxtLink :to="localePath('/donate')" class="button donate">{{ t('header.donate') }}</NuxtLink>
 
-      <button class="menu-button" popovertarget="menu" aria-label="Menu">
+      <button class="menu-button" popovertarget="menu" :aria-label="t('header.menu')">
         <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
       </button>
       <div id="menu" ref="menu" popover class="menu">
-        <button class="menu-close" popovertarget="menu" popovertargetaction="hide" aria-label="Close menu">×</button>
-        <nav aria-label="Main, mobile">
-          <NuxtLink v-for="link in links" :key="link.to" :to="link.to" @click="close">{{ link.label }}</NuxtLink>
-          <NuxtLink to="/donate" @click="close">Donate</NuxtLink>
+        <button class="menu-close" popovertarget="menu" popovertargetaction="hide" :aria-label="t('header.closeMenu')">×</button>
+        <nav :aria-label="t('header.navMobile')">
+          <NuxtLink v-for="link in links" :key="link.to" :to="localePath(link.to)" @click="close">{{ t(link.label) }}</NuxtLink>
+          <NuxtLink :to="localePath('/donate')" @click="close">{{ t('header.donate') }}</NuxtLink>
+          <NuxtLink
+            v-for="other in others"
+            :key="other.code"
+            :to="switchLocalePath(other.code)"
+            :lang="other.language"
+            :hreflang="other.language"
+            class="language"
+            @click="close"
+          >{{ other.name }}</NuxtLink>
         </nav>
       </div>
     </div>
@@ -90,6 +112,14 @@ const close = () => menu.value?.hidePopover?.()
 .nav a.router-link-active {
   border-bottom-color: var(--marigold);
 }
+.nav .language {
+  padding-left: 1.75rem;
+  border-left: 1px solid var(--rule);
+  border-bottom: 0;
+}
+.nav .language:hover {
+  text-decoration: underline;
+}
 .donate {
   min-height: 42px;
   padding-block: 0.5rem;
@@ -128,6 +158,11 @@ const close = () => menu.value?.hidePopover?.()
   padding-block: 0.6rem;
   border-bottom: 1px solid rgb(246 243 236 / 0.2);
 }
+.menu nav .language {
+  margin-top: 1.5rem;
+  border-bottom: 0;
+  font: 500 1.1rem/1.2 var(--sans);
+}
 .menu-close {
   float: right;
   width: 48px;
@@ -139,12 +174,23 @@ const close = () => menu.value?.hidePopover?.()
   line-height: 1;
   cursor: pointer;
 }
-@media (max-width: 860px) {
+/* Below these widths the links move into the menu. German needs more
+   room: its words are longer. */
+@media (max-width: 960px) {
   .nav,
   .donate {
     display: none;
   }
   .menu-button {
+    display: block;
+  }
+}
+@media (max-width: 1100px) {
+  :lang(de) .nav,
+  :lang(de) .donate {
+    display: none;
+  }
+  :lang(de) .menu-button {
     display: block;
   }
 }

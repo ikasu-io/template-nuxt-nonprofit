@@ -1,23 +1,17 @@
 <script setup>
 const today = useBuildDay()
+const { t } = useI18n()
+const { monthOf } = useFormat()
 const { data: org } = await useOrg()
-const { data: days } = await useAsyncData('upcoming-days', () =>
-  queryCollection('volunteer').where('date', '>=', today.value).order('date', 'ASC').all(),
-)
+const { data: days } = await useVolunteerDays('upcoming-days', today.value)
 usePageMeta({
-  title: 'Volunteer',
-  description: 'Plant trees, clean up the river, test the water or paddle with us. Upcoming volunteer days on the Sallow River.',
+  title: t('volunteer.title'),
+  description: t('volunteer.description'),
   image: 'volunteers-bank',
 })
 
 // The filter. Without JavaScript every day is shown.
-const types = [
-  { key: 'all', label: 'All' },
-  { key: 'planting', label: 'Tree planting' },
-  { key: 'cleanup', label: 'Cleanups' },
-  { key: 'testing', label: 'Water testing' },
-  { key: 'paddle', label: 'Paddles' },
-]
+const types = ['all', 'planting', 'cleanup', 'testing', 'paddle']
 const type = ref('all')
 const familiesOnly = ref(false)
 const shown = computed(() =>
@@ -61,43 +55,40 @@ useHead({
   <div class="wrap section">
     <header class="intro">
       <div>
-        <span class="kicker">Get involved</span>
-        <h1>Come out on a Saturday</h1>
+        <span class="kicker">{{ t('volunteer.kicker') }}</span>
+        <h1>{{ t('volunteer.heading') }}</h1>
       </div>
       <div class="how">
         <p class="lead">
-          No experience needed. We bring gloves, tools, waders and coffee; you bring boots that can get muddy and a water
-          bottle. Under-18s come with an adult.
+          {{ t('volunteer.lead') }}
         </p>
         <p class="muted">
-          To sign up, use the button next to a date: it opens an email to {{ coordinator.name }}, who will write back with
-          directions. Groups, schools and companies: write to us for a day of your own.
+          {{ t('volunteer.howTo', { name: coordinator.name }) }}
         </p>
       </div>
     </header>
 
-    <div class="filters" role="group" aria-label="Show volunteer days">
+    <div class="filters" role="group" :aria-label="t('volunteer.filters')">
       <button
-        v-for="t in types"
-        :key="t.key"
+        v-for="key in types"
+        :key="key"
         type="button"
-        :class="['chip', { on: type === t.key }]"
-        :aria-pressed="type === t.key"
-        @click="type = t.key"
+        :class="['chip', { on: type === key }]"
+        :aria-pressed="type === key"
+        @click="type = key"
       >
-        {{ t.label }}
+        {{ t(`volunteer.${key}`) }}
       </button>
       <label class="families">
         <input v-model="familiesOnly" type="checkbox" />
-        Good for families
+        {{ t('day.families') }}
       </label>
     </div>
 
-    <p v-if="!days.length" class="lead empty">
-      Nothing on the calendar right now. New dates are posted every season; write to
-      <a :href="`mailto:${coordinator.email}`">{{ coordinator.email }}</a> and we'll let you know.
-    </p>
-    <p v-else-if="!shown.length" class="lead empty">No days match. Try another filter.</p>
+    <i18n-t v-if="!days.length" keypath="volunteer.empty" tag="p" class="lead empty" scope="global">
+      <template #email><a :href="`mailto:${coordinator.email}`">{{ coordinator.email }}</a></template>
+    </i18n-t>
+    <p v-else-if="!shown.length" class="lead empty">{{ t('volunteer.noMatch') }}</p>
 
     <section v-for="group in months" :key="group.month" class="month">
       <h2>{{ group.month }}</h2>

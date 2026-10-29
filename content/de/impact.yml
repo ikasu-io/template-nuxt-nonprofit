@@ -1,0 +1,11 @@
+# Die großen Zahlen auf der Startseite. `value` erscheint so, wie es hier steht.
+since: 2009
+figures:
+  - value: "18.400"
+    label: Bäume entlang des Flusses und seiner Bäche gepflanzt
+  - value: "4"
+    label: alte Wehre zurückgebaut, 37 Kilometer Bachlauf wieder frei
+  - value: "212"
+    label: Tonnen Müll aus dem Wasser geholt
+  - value: "3.100"
+    label: Schülerinnen und Schüler haben mit uns den Fluss untersucht

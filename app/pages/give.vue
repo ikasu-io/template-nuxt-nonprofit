@@ -2,29 +2,30 @@
 // Stand-in for the donation provider's checkout. A real site points
 // `donate_url` in content/org.yml at its provider instead.
 const { data: org } = await useOrg()
-useHead({ title: 'Payment', meta: [{ name: 'robots', content: 'noindex' }] })
+const { t } = useI18n()
+const localePath = useLocalePath()
+const { money } = useFormat()
+useHead({ title: t('give.title'), meta: [{ name: 'robots', content: 'noindex' }] })
 const route = useRoute()
 const summary = ref('')
 onMounted(() => {
   const amount = route.query.amount === 'other' ? Number(route.query.other) : Number(route.query.amount)
-  if (amount > 0) summary.value = `$${amount}${route.query.frequency === 'monthly' ? ' a month' : ''}`
+  if (amount > 0) summary.value = route.query.frequency === 'monthly' ? t('donate.perMonth', { amount: money(amount) }) : money(amount)
 })
 </script>
 
 <template>
   <div class="wrap section box">
-    <span class="kicker">Payment</span>
-    <h1>This is where the checkout would open</h1>
+    <span class="kicker">{{ t('give.kicker') }}</span>
+    <h1>{{ t('give.heading') }}</h1>
     <p class="lead">
-      {{ org.name }} is a fictional organization, so no money changes hands here<template v-if="summary"> — not even
-      the {{ summary }} you picked</template>.
+      {{ t('give.lead', { name: org.name }) }}<template v-if="summary">{{ ` ${t('give.notEven', { summary })}` }}</template>.
     </p>
-    <p>
-      A real nonprofit using this template sets <code>donate_url</code> in <code>content/org.yml</code> to the page of its
-      donation provider, such as Givebutter, Donorbox, Every.org or a Stripe Payment Link. The amount and frequency chosen on
-      the Give page are passed along in the address.
-    </p>
-    <NuxtLink class="button" to="/">Back to the home page</NuxtLink>
+    <i18n-t keypath="give.provider" tag="p" scope="global">
+      <template #field><code>donate_url</code></template>
+      <template #file><code>content/org.yml</code></template>
+    </i18n-t>
+    <NuxtLink class="button" :to="localePath('/')">{{ t('give.home') }}</NuxtLink>
   </div>
 </template>
 

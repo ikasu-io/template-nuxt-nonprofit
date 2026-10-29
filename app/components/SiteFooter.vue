@@ -1,6 +1,9 @@
 <script setup>
 const { data: org } = await useOrg()
 const { data: report } = await useLatestReport()
+const { t } = useI18n()
+const localePath = useLocalePath()
+const { number } = useFormat()
 </script>
 
 <template>
@@ -11,14 +14,14 @@ const { data: report } = await useLatestReport()
     <div class="inner">
       <div class="wrap grid">
         <div class="join">
-          <p class="big">Join {{ org.members.toLocaleString('en-US') }} neighbors who look after the Sallow.</p>
+          <p class="big">{{ t('footer.join', { members: number(org.members) }) }}</p>
           <div class="buttons">
-            <NuxtLink class="button" to="/donate">Become a member</NuxtLink>
-            <NuxtLink class="button ghost" to="/volunteer">Volunteer</NuxtLink>
+            <NuxtLink class="button" :to="localePath('/donate')">{{ t('footer.member') }}</NuxtLink>
+            <NuxtLink class="button ghost" :to="localePath('/volunteer')">{{ t('footer.volunteer') }}</NuxtLink>
           </div>
         </div>
         <div>
-          <h2 class="small-head">Visit or write</h2>
+          <h2 class="small-head">{{ t('footer.visit') }}</h2>
           <address>
             {{ org.name }}<br />
             {{ org.address.street }}<br />
@@ -30,20 +33,20 @@ const { data: report } = await useLatestReport()
           </p>
         </div>
         <div>
-          <h2 class="small-head">The alliance</h2>
+          <h2 class="small-head">{{ t('footer.alliance') }}</h2>
           <ul>
-            <li><NuxtLink to="/work">Our work</NuxtLink></li>
-            <li><NuxtLink to="/stories">Stories</NuxtLink></li>
-            <li v-if="report"><NuxtLink :to="`/report/${report.year}`">Annual report {{ report.year }}</NuxtLink></li>
-            <li><NuxtLink to="/about">About and contact</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/work')">{{ t('footer.work') }}</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/stories')">{{ t('footer.stories') }}</NuxtLink></li>
+            <li v-if="report"><NuxtLink :to="localePath(`/report/${report.year}`)">{{ t('footer.report', { year: report.year }) }}</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/about')">{{ t('footer.about') }}</NuxtLink></li>
           </ul>
         </div>
       </div>
       <div class="wrap fine">
         <p>
-          {{ org.name }} is a 501(c)(3) nonprofit, EIN {{ org.ein }}. Gifts are tax-deductible as allowed by law.
+          {{ t('footer.legal', { name: org.name, ein: org.ein }) }}
         </p>
-        <p><strong>Fictional demo site — content and images generated with AI.</strong></p>
+        <p><strong>{{ t('footer.demo') }}</strong></p>
       </div>
     </div>
   </footer>

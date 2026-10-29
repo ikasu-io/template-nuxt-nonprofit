@@ -1,8 +1,14 @@
 <script setup>
-const { data: stories } = await useAsyncData('stories', () => queryCollection('stories').order('date', 'DESC').all())
+const { t, locale } = useI18n()
+const texts = useTexts()
+const localePath = useLocalePath()
+const { shortDate } = useFormat()
+const { data: stories } = await useAsyncData(`stories-${locale.value}`, () =>
+  queryCollection(texts('stories')).order('date', 'DESC').all(),
+)
 usePageMeta({
-  title: 'Stories',
-  description: 'News and long reads from the Sallow River: dam removals, kingfishers, what students found in the water.',
+  title: t('stories.title'),
+  description: t('stories.description'),
   image: stories.value[0]?.image,
 })
 </script>
@@ -10,17 +16,17 @@ usePageMeta({
 <template>
   <div class="wrap section">
     <header class="intro">
-      <span class="kicker">Stories</span>
-      <h1>From the river</h1>
+      <span class="kicker">{{ t('stories.kicker') }}</span>
+      <h1>{{ t('stories.heading') }}</h1>
     </header>
     <ol class="list">
       <li v-for="(story, i) in stories" :key="story.path" :class="{ lead: i === 0 }">
-        <NuxtLink :to="story.path" class="photo" tabindex="-1" aria-hidden="true">
+        <NuxtLink :to="localePath(story.path)" class="photo" tabindex="-1" aria-hidden="true">
           <Photo :name="story.image" :desktop="i === 0 ? '60vw' : '33vw'" :eager="i === 0" />
         </NuxtLink>
         <div>
           <span class="kicker">{{ shortDate(story.date) }} · {{ story.author }}</span>
-          <h2><NuxtLink :to="story.path">{{ story.title }}</NuxtLink></h2>
+          <h2><NuxtLink :to="localePath(story.path)">{{ story.title }}</NuxtLink></h2>
           <p class="muted">{{ story.description }}</p>
         </div>
       </li>

@@ -17,6 +17,7 @@
   "dependencies": {
     "@nuxt/content": "^3.16.1",
     "@nuxt/image": "^2.1.0",
+    "@nuxtjs/i18n": "^10.6.0",
     "nuxt": "^4.5.2",
     "zod": "^4.6.5"
   }

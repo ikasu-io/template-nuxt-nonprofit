@@ -1,21 +1,28 @@
 <script setup>
 const props = defineProps({ error: Object })
 const notFound = computed(() => props.error?.statusCode === 404)
-useHead({ title: notFound.value ? 'Page not found' : 'Something went wrong', meta: [{ name: 'robots', content: 'noindex' }] })
+const { t } = useI18n()
+const localePath = useLocalePath()
+const i18nHead = useLocaleHead({ seo: false })
+useHead({
+  htmlAttrs: { lang: () => i18nHead.value.htmlAttrs.lang },
+  title: notFound.value ? t('error.notFoundTitle') : t('error.title'),
+  meta: [{ name: 'robots', content: 'noindex' }],
+})
 </script>
 
 <template>
-  <a class="skip" href="#main">Skip to content</a>
+  <a class="skip" href="#main">{{ t('skip') }}</a>
   <SiteHeader />
   <main id="main" class="lost wrap">
-    <span class="kicker">{{ notFound ? 'Error 404' : 'Error' }}</span>
-    <h1>{{ notFound ? 'This trail washed out.' : 'Something went wrong.' }}</h1>
+    <span class="kicker">{{ notFound ? t('error.notFoundKicker') : t('error.kicker') }}</span>
+    <h1>{{ notFound ? t('error.notFoundHeading') : t('error.heading') }}</h1>
     <p class="lead">
-      {{ notFound ? "The page you were looking for isn't here. It may have moved after the last flood." : 'Please try again in a moment.' }}
+      {{ notFound ? t('error.notFoundText') : t('error.text') }}
     </p>
     <div class="buttons">
-      <NuxtLink class="button" to="/">Back to the home page</NuxtLink>
-      <NuxtLink class="button ghost" to="/volunteer">Volunteer days</NuxtLink>
+      <NuxtLink class="button" :to="localePath('/')">{{ t('error.home') }}</NuxtLink>
+      <NuxtLink class="button ghost" :to="localePath('/volunteer')">{{ t('error.volunteer') }}</NuxtLink>
     </div>
   </main>
   <SiteFooter />

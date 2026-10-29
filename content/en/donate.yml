@@ -1,0 +1,9 @@
+# What each amount in content/donate.yml pays for, in English, by amount.
+pays_for:
+  "$25": Four native seedlings with tubes and stakes
+  "$50": A water-testing kit for one school class
+  "$100": Gloves, grabbers and a dumpster share for one cleanup
+  "$250": A day of heavy equipment on a dam removal
+monthly_note: >-
+  Monthly gifts let us plan a whole planting season ahead. You can change
+  or stop yours at any time.

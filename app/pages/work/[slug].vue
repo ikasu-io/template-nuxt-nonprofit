@@ -1,18 +1,22 @@
 <script setup>
 const route = useRoute()
-const path = route.path.replace(/\/$/, '')
-const { data: project } = await useAsyncData(`project-${path}`, () => queryCollection('projects').path(path).first())
+const path = `/work/${route.params.slug}`
+const { t, locale } = useI18n()
+const texts = useTexts()
+const localePath = useLocalePath()
+const { data: project } = await useAsyncData(`project-${locale.value}-${path}`, () =>
+  queryCollection(texts('projects')).path(path).first(),
+)
 if (!project.value) throw createError({ statusCode: 404, statusMessage: 'Project not found', fatal: true })
 usePageMeta({ title: project.value.title, description: project.value.summary, image: project.value.image })
-const statusLabel = { planned: 'Planned', underway: 'Underway', done: 'Done' }
 </script>
 
 <template>
   <article>
     <header class="wrap head">
-      <NuxtLink to="/work" class="back">Our work</NuxtLink>
+      <NuxtLink :to="localePath('/work')" class="back">{{ t('work.title') }}</NuxtLink>
       <p class="meta">
-        <span :class="['status', project.status]">{{ statusLabel[project.status] }}</span>
+        <span :class="['status', project.status]">{{ t(`status.${project.status}`) }}</span>
         <span class="muted">{{ project.place }} · {{ project.years }}</span>
       </p>
       <h1>{{ project.title }}</h1>
@@ -22,11 +26,11 @@ const statusLabel = { planned: 'Planned', underway: 'Underway', done: 'Done' }
     <div v-if="project.before && project.after" class="wrap pair">
       <figure>
         <Photo :name="project.before" desktop="50vw" eager />
-        <figcaption><strong>Before</strong></figcaption>
+        <figcaption><strong>{{ t('work.before') }}</strong></figcaption>
       </figure>
       <figure>
         <Photo :name="project.after" desktop="50vw" eager />
-        <figcaption><strong>After</strong></figcaption>
+        <figcaption><strong>{{ t('work.after') }}</strong></figcaption>
       </figure>
     </div>
     <figure v-else class="wrap single">
@@ -37,7 +41,7 @@ const statusLabel = { planned: 'Planned', underway: 'Underway', done: 'Done' }
       <aside class="side">
         <Figures v-if="project.figures.length" :figures="project.figures" class="side-figures" />
         <div v-if="project.partners.length" class="partners">
-          <h2 class="small-head">With</h2>
+          <h2 class="small-head">{{ t('work.with') }}</h2>
           <ul>
             <li v-for="partner in project.partners" :key="partner">{{ partner }}</li>
           </ul>
@@ -47,10 +51,10 @@ const statusLabel = { planned: 'Planned', underway: 'Underway', done: 'Done' }
     </div>
 
     <div class="wrap cta">
-      <p>Want to help with this?</p>
+      <p>{{ t('work.help') }}</p>
       <div class="buttons">
-        <NuxtLink class="button" to="/volunteer">See volunteer days</NuxtLink>
-        <NuxtLink class="button ghost" to="/donate">Give</NuxtLink>
+        <NuxtLink class="button" :to="localePath('/volunteer')">{{ t('work.days') }}</NuxtLink>
+        <NuxtLink class="button ghost" :to="localePath('/donate')">{{ t('work.give') }}</NuxtLink>
       </div>
     </div>
   </article>

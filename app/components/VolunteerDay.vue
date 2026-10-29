@@ -3,10 +3,11 @@
 // link that opens an email with the event in the subject.
 const props = defineProps({ day: { type: Object, required: true }, full: Boolean })
 const { data: org } = await useOrg()
-const labels = { planting: 'Tree planting', cleanup: 'Cleanup', testing: 'Water testing', paddle: 'Paddle' }
+const { t } = useI18n()
+const { longDate, shortDate, weekdayOf, dayOfMonth, monthShort, clock } = useFormat()
 const signup = computed(() => {
   const contact = org.value.staff.find((p) => p.email.startsWith('volunteer'))?.email ?? org.value.email
-  const subject = `Volunteer: ${props.day.title}, ${shortDate(props.day.date)}`
+  const subject = t('day.subject', { title: props.day.title, date: shortDate(props.day.date) })
   return `mailto:${contact}?subject=${encodeURIComponent(subject)}`
 })
 </script>
@@ -20,19 +21,19 @@ const signup = computed(() => {
     </p>
     <div class="what">
       <p class="tags">
-        <span :class="['type', day.type]">{{ labels[day.type] }}</span>
-        <span v-if="day.families" class="family">Good for families</span>
+        <span :class="['type', day.type]">{{ t(`types.${day.type}`) }}</span>
+        <span v-if="day.families" class="family">{{ t('day.families') }}</span>
       </p>
       <h3>{{ day.title }}</h3>
       <p class="meta">
         <span class="visually-hidden">{{ longDate(day.date) }}, </span>
-        {{ clock(day.start) }} – {{ clock(day.end) }} · {{ day.place }}
+        {{ t('day.time', { start: clock(day.start), end: clock(day.end) }) }} · {{ day.place }}
       </p>
       <ContentRenderer v-if="full" :value="day" class="text" />
     </div>
     <div class="act">
-      <a class="button ghost" :href="signup">Sign up<span class="visually-hidden"> for {{ day.title }}</span></a>
-      <p class="spots">{{ day.spots }} spots</p>
+      <a class="button ghost" :href="signup">{{ t('day.signUp') }}<span class="visually-hidden">{{ ` ${t('day.signUpFor', { title: day.title })}` }}</span></a>
+      <p class="spots">{{ t('day.spots', { n: day.spots }) }}</p>
     </div>
   </article>
 </template>

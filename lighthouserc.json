@@ -2,7 +2,7 @@
   "ci": {
     "collect": {
       "staticDistDir": "./.output/public",
-      "url": ["/", "/volunteer/", "/stories/the-dam-came-out/", "/donate/"],
+      "url": ["/", "/volunteer/", "/stories/the-dam-came-out/", "/donate/", "/de/", "/de/stories/the-dam-came-out/"],
       "numberOfRuns": 3
     },
     "assert": {

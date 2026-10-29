@@ -1,9 +1,20 @@
 <script setup>
+const { t, locale } = useI18n()
+const texts = useTexts()
+const { money } = useFormat()
 const { data: org } = await useOrg()
-const { data: donate } = await useAsyncData('donate', () => queryCollection('donate').first())
+// The amounts from content/donate.yml, each with what it pays for in the
+// page's language.
+const { data: donate } = await useAsyncData(`donate-${locale.value}`, async () => {
+  const [{ amounts }, text] = await Promise.all([queryCollection('donate').first(), queryCollection(texts('donate')).first()])
+  return {
+    amounts: amounts.map((amount) => ({ amount, pays_for: text.pays_for[`$${amount}`] })),
+    monthly_note: text.monthly_note,
+  }
+})
 usePageMeta({
-  title: 'Give',
-  description: `Support ${org.value.name}: a one-time or monthly gift plants trees, funds water testing and takes out old dams.`,
+  title: t('donate.title'),
+  description: t('donate.description', { name: org.value.name }),
   image: 'planting-hands',
 })
 
@@ -15,60 +26,58 @@ const other = ref('')
 const chosen = computed(() => (amount.value === 'other' ? Number(other.value) || 0 : Number(amount.value)))
 const paysFor = computed(() => {
   const match = [...donate.value.amounts].reverse().find((a) => chosen.value >= a.amount)
-  return match ? match.pays_for : 'Every dollar goes to the river.'
+  return match ? match.pays_for : t('donate.anyAmount')
 })
 </script>
 
 <template>
   <div class="wrap section give">
     <div class="text">
-      <span class="kicker">Give</span>
-      <h1>Every $6 plants a tree that will shade the creek for a hundred years</h1>
+      <span class="kicker">{{ t('donate.kicker') }}</span>
+      <h1>{{ t('donate.heading') }}</h1>
       <p class="lead">
-        Most of our money comes from people who live along the river. It pays for seedlings, waders, water-testing kits and the
-        heavy equipment that takes old dams out.
+        {{ t('donate.lead') }}
       </p>
       <Photo name="planting-hands" desktop="40vw" class="photo" />
     </div>
 
     <form class="picker" :action="org.donate_url" method="get">
       <fieldset class="freq">
-        <legend class="visually-hidden">How often</legend>
+        <legend class="visually-hidden">{{ t('donate.howOften') }}</legend>
         <label :class="{ on: frequency === 'once' }">
           <input v-model="frequency" type="radio" name="frequency" value="once" />
-          One time
+          {{ t('donate.once') }}
         </label>
         <label :class="{ on: frequency === 'monthly' }">
           <input v-model="frequency" type="radio" name="frequency" value="monthly" />
-          Monthly
+          {{ t('donate.monthly') }}
         </label>
       </fieldset>
 
       <fieldset class="amounts">
-        <legend>Amount</legend>
+        <legend>{{ t('donate.amount') }}</legend>
         <label v-for="a in donate.amounts" :key="a.amount" :class="{ on: amount === String(a.amount) }">
           <input v-model="amount" type="radio" name="amount" :value="String(a.amount)" />
           {{ money(a.amount) }}
         </label>
         <label :class="['other', { on: amount === 'other' }]">
           <input v-model="amount" type="radio" name="amount" value="other" />
-          Other
+          {{ t('donate.other') }}
         </label>
         <label v-if="amount === 'other'" class="other-input">
-          <span class="visually-hidden">Other amount in dollars</span>
+          <span class="visually-hidden">{{ t('donate.otherAmount') }}</span>
           $ <input v-model="other" type="number" name="other" min="1" step="1" inputmode="numeric" placeholder="75" />
         </label>
       </fieldset>
 
       <p class="pays" aria-live="polite">
-        <strong>{{ money(chosen) }}{{ frequency === 'monthly' ? ' a month' : '' }}:</strong> {{ paysFor }}
+        <strong>{{ frequency === 'monthly' ? t('donate.perMonth', { amount: money(chosen) }) : money(chosen) }}:</strong> {{ paysFor }}
       </p>
       <p v-if="frequency === 'monthly'" class="muted note">{{ donate.monthly_note }}</p>
 
-      <button class="button submit" type="submit">Continue to payment</button>
+      <button class="button submit" type="submit">{{ t('donate.continue') }}</button>
       <p class="muted note">
-        {{ org.name }} is a 501(c)(3) nonprofit (EIN {{ org.ein }}); your gift is tax-deductible as allowed by law. Membership
-        starts at $25 a year.
+        {{ t('donate.note', { name: org.name, ein: org.ein }) }}
       </p>
     </form>
   </div>

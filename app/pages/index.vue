@@ -1,11 +1,18 @@
 <script setup>
 const today = useBuildDay()
+const { t, locale } = useI18n()
+const texts = useTexts()
+const localePath = useLocalePath()
+const { money, shortDate } = useFormat()
 const { data: org } = await useOrg()
 const [{ data: campaign }, { data: impact }, { data: days }, { data: stories }, { data: report }] = await Promise.all([
-  useAsyncData('campaign', () => queryCollection('campaign').first()),
-  useAsyncData('impact', () => queryCollection('impact').first()),
-  useAsyncData('next-days', () => queryCollection('volunteer').where('date', '>=', today.value).order('date', 'ASC').limit(3).all()),
-  useAsyncData('latest-stories', () => queryCollection('stories').order('date', 'DESC').limit(3).all()),
+  useAsyncData(`campaign-${locale.value}`, async () => ({
+    ...(await queryCollection('campaign').first()),
+    ...(await queryCollection(texts('campaign')).first()),
+  })),
+  useAsyncData(`impact-${locale.value}`, () => queryCollection(texts('impact')).first()),
+  useVolunteerDays('next-days', today.value, 3),
+  useAsyncData(`latest-stories-${locale.value}`, () => queryCollection(texts('stories')).order('date', 'DESC').limit(3).all()),
   useLatestReport(),
 ])
 
@@ -21,12 +28,12 @@ useHead({ titleTemplate: '%s' })
     <!-- A magazine spread: words on the left, the river bleeding off the right edge -->
     <section class="hero">
       <div class="hero-text">
-        <span class="kicker">Since {{ org.founded }} · {{ org.address.town }}, Ohio</span>
+        <span class="kicker">{{ t('home.kicker', { founded: org.founded, town: org.address.town }) }}</span>
         <h1>{{ org.tagline.replace(/\.$/, '') }}<span class="dot">.</span></h1>
         <p class="lead">{{ org.description }}</p>
         <div class="buttons">
-          <NuxtLink class="button" to="/volunteer">Volunteer with us</NuxtLink>
-          <NuxtLink class="button ghost" to="/donate">Give</NuxtLink>
+          <NuxtLink class="button" :to="localePath('/volunteer')">{{ t('home.volunteer') }}</NuxtLink>
+          <NuxtLink class="button ghost" :to="localePath('/donate')">{{ t('home.give') }}</NuxtLink>
         </div>
       </div>
       <figure class="hero-photo">
@@ -37,24 +44,24 @@ useHead({ titleTemplate: '%s' })
     <!-- The current campaign -->
     <section class="section wrap campaign" aria-labelledby="campaign-title">
       <div class="campaign-text">
-        <span class="kicker">{{ daysLeft > 0 ? 'This season' : 'Thank you' }}</span>
+        <span class="kicker">{{ daysLeft > 0 ? t('home.season') : t('home.thanks') }}</span>
         <h2 id="campaign-title">{{ campaign.title }}</h2>
         <p class="lead">{{ campaign.text }}</p>
         <div class="progress">
           <p class="raised">
             <strong>{{ money(campaign.raised) }}</strong>
-            <span>raised of {{ money(campaign.goal) }}</span>
+            <span>{{ t('home.raisedOf', { goal: money(campaign.goal) }) }}</span>
           </p>
-          <div class="track" role="progressbar" :aria-valuenow="percent" aria-valuemin="0" aria-valuemax="100" :aria-label="`${percent}% of the goal`">
+          <div class="track" role="progressbar" :aria-valuenow="percent" aria-valuemin="0" aria-valuemax="100" :aria-label="t('home.ofGoal', { percent })">
             <div class="fill" :style="{ width: `${percent}%` }" />
           </div>
           <p class="left">
-            <template v-if="daysLeft > 1">{{ percent }}% there · {{ daysLeft }} days left</template>
-            <template v-else-if="daysLeft >= 0">{{ percent }}% there · last day</template>
-            <template v-else>The campaign closed on {{ shortDate(campaign.ends) }}. Thank you to everyone who gave.</template>
+            <template v-if="daysLeft > 1">{{ t('home.daysLeft', { percent, days: daysLeft }) }}</template>
+            <template v-else-if="daysLeft >= 0">{{ t('home.lastDay', { percent }) }}</template>
+            <template v-else>{{ t('home.closed', { date: shortDate(campaign.ends) }) }}</template>
           </p>
         </div>
-        <NuxtLink v-if="daysLeft >= 0" class="button" to="/donate">Plant a tree for $6</NuxtLink>
+        <NuxtLink v-if="daysLeft >= 0" class="button" :to="localePath('/donate')">{{ t('home.plant') }}</NuxtLink>
       </div>
       <figure class="campaign-photo">
         <Photo :name="campaign.image" desktop="40vw" />
@@ -64,7 +71,7 @@ useHead({ titleTemplate: '%s' })
     <!-- What it has added up to -->
     <section class="band impact" aria-labelledby="impact-title">
       <div class="wrap section">
-        <h2 id="impact-title" class="impact-title">What {{ Number(today.slice(0, 4)) - impact.since }} years of neighbors have done</h2>
+        <h2 id="impact-title" class="impact-title">{{ t('home.impact', { years: Number(today.slice(0, 4)) - impact.since }) }}</h2>
         <Figures :figures="impact.figures" />
       </div>
     </section>
@@ -72,23 +79,23 @@ useHead({ titleTemplate: '%s' })
     <!-- Three ways to help -->
     <section class="section wrap" aria-labelledby="help-title">
       <div class="section-head">
-        <h2 id="help-title">Three ways to help</h2>
+        <h2 id="help-title">{{ t('home.help') }}</h2>
       </div>
       <ol class="ways">
         <li>
           <span class="n">01</span>
-          <h3><NuxtLink to="/volunteer">Come out on a Saturday</NuxtLink></h3>
-          <p>Plant trees, pull tires out of the river or count mayflies. No experience needed; we bring the tools and the coffee.</p>
+          <h3><NuxtLink :to="localePath('/volunteer')">{{ t('home.saturday') }}</NuxtLink></h3>
+          <p>{{ t('home.saturdayText') }}</p>
         </li>
         <li>
           <span class="n">02</span>
-          <h3><NuxtLink to="/donate">Give once or every month</NuxtLink></h3>
-          <p>$25 plants four trees. Monthly gifts let us plan a whole season ahead.</p>
+          <h3><NuxtLink :to="localePath('/donate')">{{ t('home.monthly') }}</NuxtLink></h3>
+          <p>{{ t('home.monthlyText') }}</p>
         </li>
         <li>
           <span class="n">03</span>
-          <h3><NuxtLink to="/donate">Become a member</NuxtLink></h3>
-          <p>Members vote for the board, get the river report twice a year and paddle with us at member prices.</p>
+          <h3><NuxtLink :to="localePath('/donate')">{{ t('home.member') }}</NuxtLink></h3>
+          <p>{{ t('home.memberText') }}</p>
         </li>
       </ol>
     </section>
@@ -96,24 +103,24 @@ useHead({ titleTemplate: '%s' })
     <!-- The next volunteer days -->
     <section class="section wrap next" aria-labelledby="next-title">
       <div class="section-head">
-        <h2 id="next-title">Next volunteer days</h2>
-        <NuxtLink class="more" to="/volunteer">All dates</NuxtLink>
+        <h2 id="next-title">{{ t('home.next') }}</h2>
+        <NuxtLink class="more" :to="localePath('/volunteer')">{{ t('home.allDates') }}</NuxtLink>
       </div>
       <div v-if="days.length">
         <VolunteerDay v-for="day in days" :key="day.path" :day="day" />
       </div>
-      <p v-else class="lead">Nothing on the calendar right now. New dates are posted every season; write to us and we'll let you know.</p>
+      <p v-else class="lead">{{ t('home.noDays') }}</p>
     </section>
 
     <!-- Stories -->
     <section class="section wrap" aria-labelledby="stories-title">
       <div class="section-head">
-        <h2 id="stories-title">From the river</h2>
-        <NuxtLink class="more" to="/stories">All stories</NuxtLink>
+        <h2 id="stories-title">{{ t('home.stories') }}</h2>
+        <NuxtLink class="more" :to="localePath('/stories')">{{ t('home.allStories') }}</NuxtLink>
       </div>
       <div v-if="stories.length" class="stories">
         <article class="story first">
-          <NuxtLink :to="stories[0].path" class="story-link">
+          <NuxtLink :to="localePath(stories[0].path)" class="story-link">
             <Photo :name="stories[0].image" desktop="60vw" />
             <span class="kicker">{{ shortDate(stories[0].date) }}</span>
             <h3>{{ stories[0].title }}</h3>
@@ -122,7 +129,7 @@ useHead({ titleTemplate: '%s' })
         </article>
         <div class="others">
           <article v-for="story in stories.slice(1)" :key="story.path" class="story">
-            <NuxtLink :to="story.path" class="story-link">
+            <NuxtLink :to="localePath(story.path)" class="story-link">
               <Photo :name="story.image" desktop="30vw" />
               <span class="kicker">{{ shortDate(story.date) }}</span>
               <h3>{{ story.title }}</h3>
@@ -134,8 +141,8 @@ useHead({ titleTemplate: '%s' })
 
     <section v-if="report" class="wrap report-line">
       <p>
-        Where the money goes, down to the dollar:
-        <NuxtLink class="more" :to="`/report/${report.year}`">the {{ report.year }} annual report</NuxtLink>
+        {{ t('home.money') }}
+        <NuxtLink class="more" :to="localePath(`/report/${report.year}`)">{{ t('home.report', { year: report.year }) }}</NuxtLink>
       </p>
     </section>
   </div>

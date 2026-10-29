@@ -1,5 +1,10 @@
 // Sallow River Alliance — Nuxt configuration. Content lives in content/
 // (see content.config.ts); this file only wires the modules together.
+import { readFileSync } from 'node:fs'
+
+// The domain from content/org.yml, for the links between languages.
+const siteUrl = readFileSync('content/org.yml', 'utf8').match(/^url: *(\S+)/m)![1]
+
 export default defineNuxtConfig({
   compatibilityDate: '2026-10-01',
   devtools: { enabled: false },
@@ -7,12 +12,11 @@ export default defineNuxtConfig({
   // first paint does not wait for extra requests.
   features: { inlineStyles: true },
   vite: { build: { cssCodeSplit: false } },
-  modules: ['@nuxt/content', '@nuxt/image', '~~/modules/check-content'],
+  modules: ['@nuxt/content', '@nuxt/image', '@nuxtjs/i18n', '~~/modules/check-content'],
   css: ['~/assets/css/main.css'],
 
   app: {
     head: {
-      htmlAttrs: { lang: 'en-US' },
       titleTemplate: '%s · Sallow River Alliance',
       meta: [{ name: 'theme-color', content: '#F6F3EC' }],
       link: [
@@ -21,6 +25,22 @@ export default defineNuxtConfig({
         { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/public-sans-latin-wght-normal.woff2', crossorigin: '' },
       ],
     },
+  },
+
+  // English at /, German at /de/. Short texts (navigation, buttons, labels)
+  // are in locales/en.json and locales/de.json, under the same key in both;
+  // longer texts are in content/en/ and content/de/. app.vue sets
+  // <html lang> and the links between the languages.
+  i18n: {
+    strategy: 'prefix_except_default',
+    defaultLocale: 'en',
+    locales: [
+      { code: 'en', language: 'en-US', name: 'English', file: 'en.json' },
+      { code: 'de', language: 'de-DE', name: 'Deutsch', file: 'de.json' },
+    ],
+    langDir: '../locales',
+    baseUrl: siteUrl,
+    detectBrowserLanguage: false,
   },
 
   content: {
@@ -39,7 +59,7 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       crawlLinks: true,
-      routes: ['/', '/sitemap.xml', '/robots.txt'],
+      routes: ['/', '/de', '/sitemap.xml', '/robots.txt'],
       failOnError: true,
     },
   },

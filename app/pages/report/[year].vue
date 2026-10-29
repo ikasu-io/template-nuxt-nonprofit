@@ -1,12 +1,17 @@
 <script setup>
 const route = useRoute()
 const year = Number(route.params.year)
-const { data: report } = await useAsyncData(`report-${year}`, () => queryCollection('reports').where('year', '=', year).first())
+const { t, locale } = useI18n()
+const texts = useTexts()
+const { money } = useFormat()
+const { data: report } = await useAsyncData(`report-${locale.value}-${year}`, () =>
+  queryCollection(texts('reports')).where('year', '=', year).first(),
+)
 if (!report.value) throw createError({ statusCode: 404, statusMessage: 'Report not found', fatal: true })
 const { data: org } = await useOrg()
 usePageMeta({
-  title: `Annual report ${year}`,
-  description: `What ${org.value.name} did in ${year}, and where every dollar came from and went.`,
+  title: t('report.title', { year }),
+  description: t('report.description', { name: org.value.name, year }),
   image: 'volunteers-bank',
 })
 
@@ -20,12 +25,12 @@ const program = computed(() => share(report.value.spending[0].amount + (report.v
 <template>
   <div>
     <header class="wrap section head">
-      <span class="kicker">Annual report</span>
+      <span class="kicker">{{ t('report.kicker') }}</span>
       <h1 class="year">{{ report.year }}</h1>
       <p class="lead">{{ report.intro }}</p>
     </header>
 
-    <section class="band" aria-label="The year in numbers">
+    <section class="band" :aria-label="t('report.numbers')">
       <div class="wrap section">
         <Figures :figures="report.figures" />
       </div>
@@ -33,17 +38,17 @@ const program = computed(() => share(report.value.spending[0].amount + (report.v
 
     <section class="wrap section money" aria-labelledby="money-title">
       <div class="section-head">
-        <h2 id="money-title">Where the money went</h2>
+        <h2 id="money-title">{{ t('report.money') }}</h2>
       </div>
       <div class="cols">
         <div>
-          <p class="big">
-            <strong>{{ program }}¢</strong> of every dollar went straight to the river and the classrooms.
-          </p>
-          <p class="muted">Spent in {{ report.year }}: {{ money(spent) }}. Received: {{ money(received) }}.</p>
+          <i18n-t keypath="report.perDollar" tag="p" class="big" scope="global">
+            <template #cents><strong>{{ t('report.cents', { n: program }) }}</strong></template>
+          </i18n-t>
+          <p class="muted">{{ t('report.totals', { year: report.year, spent: money(spent), received: money(received) }) }}</p>
         </div>
         <div>
-          <h3>Spending</h3>
+          <h3>{{ t('report.spending') }}</h3>
           <ul class="bars">
             <li v-for="(row, i) in report.spending" :key="row.label">
               <div class="row">
@@ -57,7 +62,7 @@ const program = computed(() => share(report.value.spending[0].amount + (report.v
               <span class="pct">{{ share(row.amount, spent) }}%</span>
             </li>
           </ul>
-          <h3>Income</h3>
+          <h3>{{ t('report.income') }}</h3>
           <ul class="bars">
             <li v-for="row in report.income" :key="row.label">
               <div class="row">
@@ -77,7 +82,7 @@ const program = computed(() => share(report.value.spending[0].amount + (report.v
 
     <section class="wrap section thanks" aria-labelledby="thanks-title">
       <div class="section-head">
-        <h2 id="thanks-title">Thank you</h2>
+        <h2 id="thanks-title">{{ t('report.thanks') }}</h2>
       </div>
       <ul>
         <li v-for="name in report.thanks" :key="name">{{ name }}</li>

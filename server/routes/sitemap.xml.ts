@@ -1,12 +1,12 @@
 // /sitemap.xml, written when the site is generated: every page, project,
-// story and annual report.
+// story and annual report, in English and under /de/ in German.
 import { queryCollection } from '@nuxt/content/server'
 
 export default defineEventHandler(async (event) => {
   const org = await queryCollection(event, 'org').first()
-  const projects = await queryCollection(event, 'projects').select('path').all()
-  const stories = await queryCollection(event, 'stories').select('path', 'date').all()
-  const reports = await queryCollection(event, 'reports').select('year').all()
+  const projects = await queryCollection(event, 'projects_en').select('path').all()
+  const stories = await queryCollection(event, 'stories_en').select('path', 'date').all()
+  const reports = await queryCollection(event, 'reports_en').select('year').all()
 
   const pages = [
     { path: '/' },
@@ -19,7 +19,8 @@ export default defineEventHandler(async (event) => {
     ...stories.map((s) => ({ path: s.path, lastmod: s.date })),
     ...reports.map((r) => ({ path: `/report/${r.year}` })),
   ]
-  const urls = pages
+  const urls = ['', '/de']
+    .flatMap((prefix) => pages.map((p) => ({ ...p, path: prefix && p.path === '/' ? prefix : prefix + p.path })))
     .map((p) => `  <url><loc>${org!.url}${p.path}</loc>${p.lastmod ? `<lastmod>${p.lastmod}</lastmod>` : ''}</url>`)
     .join('\n')
 
